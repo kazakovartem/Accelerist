@@ -49,7 +49,8 @@
               "tsx": "never"
             }
         ],
-        "react/function-component-definition": "off"
+        "react/function-component-definition": "off",
+        "no-restricted-exports": ["warn", { "restrictedNamedExports": ["default"] }]
     },
     "settings": {
         "react": {
