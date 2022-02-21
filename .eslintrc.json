@@ -38,7 +38,13 @@
             "allowTypedFunctionExpressions": true
             }
         ],
-        "prettier/prettier": ["error", { "singleQuote": true }],
+        "prettier/prettier": [
+            "off", 
+            { 
+                "endOfLine": true
+            }
+            
+        ],
         "import/extensions": [
             "error",
             "ignorePackages",
@@ -50,7 +56,22 @@
             }
         ],
         "react/function-component-definition": "off",
-        "no-restricted-exports": ["warn", { "restrictedNamedExports": ["default"] }]
+        "no-restricted-exports": ["warn", { "restrictedNamedExports": ["default"] }],
+        "comma-dangle": ["error", {
+            "arrays": "never",
+            "objects": "never",
+            "imports": "never",
+            "exports": "never",
+            "functions": "never"
+        }],
+        "import/prefer-default-export": "off",
+        "object-curly-newline": ["error", { "ImportDeclaration": "never", "ExportDeclaration": "never" }],
+        "implicit-arrow-linebreak": "warn",
+        "no-param-reassign": ["error", { "props": false }],
+        "no-return-await": "off",
+        "quotes": ["off", "backtick"],
+        "no-shadow": "off",
+        "@typescript-eslint/no-shadow": ["error"]
     },
     "settings": {
         "react": {

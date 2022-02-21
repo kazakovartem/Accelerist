@@ -1,14 +1,22 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { CSSProp, useTheme } from 'styled-components';
 
 interface PrimeButtonProps {
   label: string;
+  containerStyle: CSSProp;
 }
 
-const PrimeButton: React.FC<PrimeButtonProps> = ({ label }) => {
+enum typeButton {
+  normal,
+  hover,
+}
+
+const PrimeButton: React.FC<PrimeButtonProps> = ({ label, containerStyle = {} }) => {
   const root = label;
+  const theme = useTheme();
+  console.log('Current theme: ', theme);
   return (
-    <Root>
+    <Root $CSS={containerStyle}>
       <Title>{root}</Title>
     </Root>
   );
@@ -16,16 +24,22 @@ const PrimeButton: React.FC<PrimeButtonProps> = ({ label }) => {
 
 export default React.memo(PrimeButton);
 
-const Root = styled.button`
-  background-color: #2a71aa;
-  width: 350px;
-  height: 60px;
+const Root = styled.button<{ $CSS: CSSProp }>`
+  background-color: #2baee0;
+  max-width: 100%;
+  max-height: 100%;
   text-align: center;
-  border-radius: 18px;
+  border-radius: 6px;
+  border: 0;
+  ${({ $CSS }) => $CSS};
+  &:hover {
+    background-color: #51C2EE;
+  }
 `;
 
 const Title = styled.p`
-  font-size: 22px;
+  font-weight: 500;
+  font-size: 16px;
   text-align: center;
-  color: #20cf5b;
+  color: #fff;
 `;
