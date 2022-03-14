@@ -1,29 +1,52 @@
 import React from 'react';
-import './App.css';
-import styled from 'styled-components';
-import PrimeButton from './UI/PrimeButton';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectors } from './state/ducks/ducks';
+import AuthorizationsScreen from './navigate/authorizations';
+import DeckScreen from './navigate/deck';
+import ResetPassword from './navigate/resetPassword';
+import ChangePassword from './navigate/changePassword';
 
 function App() {
-  const style = 'width: 234px; height: 46px';
+  const user = useSelector(selectors.user.selectUser());
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <TestContain>
-          My code
-          <PrimeButton label="test LABEL" containerStyle={style} />
-        </TestContain>
-      </header>
-    </div>
+    <Router>
+      {!user.isAuthorized && (
+        <Routes>
+          <Route path="/login" element={<AuthorizationsScreen />} />
+
+          <Route path="/register" element={<AuthorizationsScreen />} />
+
+          <Route path="/reset" element={<ResetPassword />} />
+
+          <Route path="/change_password" element={<ChangePassword />} />
+
+          <Route path="/" element={<Navigate to="/login" />} />
+
+        </Routes>
+      )}
+      {user.isAuthorized && (
+        <Routes>
+          <Route path="/dashboard" element={<DeckScreen />} />
+
+          <Route path="/search" element={<DeckScreen />} />
+
+          <Route path="/company" element={<DeckScreen />} />
+
+          <Route path="/company-favorites" element={<DeckScreen />} />
+
+          <Route path="/prospects" element={<DeckScreen />} />
+
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+
+          <Route path="/login" element={<Navigate to="/dashboard" />} />
+
+          <Route path="*" element={<DeckScreen />} />
+        </Routes>
+      )}
+    </Router>
   );
 }
 
 export default App;
-
-const TestContain = styled.div`
-  background-color: #c06464;
-  width: 600px;
-  height: 800px;
-  font-size: 1.5em;
-  text-align: center;
-  color: #29b668;
-`;

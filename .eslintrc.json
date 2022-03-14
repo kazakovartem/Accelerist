@@ -57,15 +57,9 @@
         ],
         "react/function-component-definition": "off",
         "no-restricted-exports": ["warn", { "restrictedNamedExports": ["default"] }],
-        "comma-dangle": ["error", {
-            "arrays": "never",
-            "objects": "never",
-            "imports": "never",
-            "exports": "never",
-            "functions": "never"
-        }],
+        "comma-dangle": "off",
         "import/prefer-default-export": "off",
-        "object-curly-newline": ["error", { "ImportDeclaration": "never", "ExportDeclaration": "never" }],
+        "object-curly-newline": "off",
         "implicit-arrow-linebreak": "warn",
         "no-param-reassign": ["error", { "props": false }],
         "no-return-await": "off",

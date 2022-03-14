@@ -1,7 +1,22 @@
 export type User = {
-  name: string;
   email: string;
   token: string;
-  id: number;
-  logged: boolean;
+  status: null | string;
+  error: null | string;
+  id: string;
+  firstName: string;
+  lastName: string;
+  isAuthorized: boolean;
+  role: string;
+  teamId: string;
+  loggedInAt: string;
+  createdAt: string;
+  updatedAt: string;
+  avatarKey: string | null;
 };
+
+export enum sizeScreen {
+  mobile= '375px',
+  tablet= '768px',
+  laptop= '1440px',
+}

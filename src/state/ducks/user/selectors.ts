@@ -8,5 +8,5 @@ function selectUser() {
 }
 
 export default {
-  selectUser
+  selectUser,
 };

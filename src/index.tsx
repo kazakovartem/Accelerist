@@ -1,12 +1,58 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import { createGlobalStyle } from 'styled-components';
+import { PersistGate } from 'redux-persist/integration/react';
+import { Provider } from 'react-redux';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { store, persistor } from './state/store';
+import RubikMedium from './assets/founts/Rubik-Medium.ttf';
+import RubikRegular from './assets/founts/Rubik-Regular.ttf';
+import GothamRounded from './assets/founts/GothamRoundedMedium.otf';
 
+const Global = createGlobalStyle`
+@font-face {
+  font-family: 'Rubik-Medium';
+  font-display: swap;
+  src: url(${RubikMedium}) format('truetype');
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rubik-Regular';
+  font-display: swap;
+  src: url(${RubikRegular}) format('truetype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GothamRounded-Medium';
+  font-display: swap;
+  src:  local('GothamRounded-Medium'),
+  url(${GothamRounded}) format('opentype');
+  font-style: normal;
+}
+
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body p {
+  margin: 0;
+}
+body h1 {
+  margin: 0;
+}
+`;
+// font-family: 'Rubik-Regular';
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <Global />
+        <App />
+      </PersistGate>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root'),
 );

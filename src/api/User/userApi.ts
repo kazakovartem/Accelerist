@@ -1,21 +1,37 @@
 import { api } from '../httpClient';
-import { SIGN_IN, SIGN_UP } from '../types';
+import { SIGN_IN, SIGN_UP, PASSWORD_SEND_MAIL, PASSWORD_CHANGE } from '../types';
 
-export async function signIn(emailUser: string, passwordUser: string) {
+export async function signIn(email: string, password: string) {
   return await api
     .post(SIGN_IN, {
-      email: emailUser,
-      password: passwordUser,
+      email,
+      password,
     })
     .catch((error) => error);
 }
 
-export async function signUp(emailUser: string, nameUser: string, passwordUser: string) {
+export async function signUp(email: string, password: string) {
   return await api
     .post(SIGN_UP, {
-      email: emailUser,
-      name: nameUser,
-      password: passwordUser,
+      email,
+      password,
+    })
+    .catch((error) => error);
+}
+
+export async function sendMail(email: string) {
+  return await api
+    .post(PASSWORD_SEND_MAIL, {
+      email,
+    })
+    .catch((error) => error);
+}
+
+export async function changePassword(password: string, passwordConfirmation: string) {
+  return await api
+    .post(PASSWORD_CHANGE, {
+      password,
+      passwordConfirmation,
     })
     .catch((error) => error);
 }
@@ -23,4 +39,6 @@ export async function signUp(emailUser: string, nameUser: string, passwordUser: 
 export default {
   signIn,
   signUp,
+  sendMail,
+  changePassword,
 };
