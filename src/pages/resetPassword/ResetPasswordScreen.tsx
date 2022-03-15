@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { selectors, operations } from '../../state/ducks/ducks';
 import PrimeButton from '../../UI/PrimeButton';
-import LoginContainer from '../../UI/LoginContainer';
 import LoginInput from '../../UI/LoginInput';
-import eyeImage from '../../assets/image/eye.svg';
-import eyeOffImage from '../../assets/image/eyeOff.svg';
 import { sizeScreen } from '../../types';
 
 enum InputState {
@@ -20,119 +17,59 @@ enum InputState {
 }
 
 type FormValues = {
-  passwordConfirm: string;
-  password: string;
+  email: string;
 };
 
-const ChangePasswordScreen: React.FC<any> = () => {
+const ResetPasswordScreen = () => {
   const styleButton = 'max-height: 46px;';
   const styleInput = 'max-height: 46px;';
   const dispatch = useDispatch();
-  const user = useSelector(selectors.user.selectUser());
-  const [hidePasswordState, setHidePasswordState] = useState(false);
-  const [hidePasswordConfirmationState, setHidePasswordConfirmationState] = useState(false);
-  const token = useLocation().search.slice(20);
   const options = {
     autoClose: 3000,
     position: toast.POSITION.TOP_LEFT,
     pauseOnHover: false,
   };
+  const user = useSelector(selectors.user.selectUser());
   // const nav = useNavigate();
   const onSubmit = (data: FormValues) => {
     // nav('/');
-    dispatch(
-      operations.user.changePassword({
-        passwordConfirm: data.passwordConfirm,
-        password: data.password,
-      }),
-    );
+    dispatch(operations.user.sendMail({ email: data.email }));
     toast(user.error, options);
   };
-  useEffect(() => {
-    dispatch(
-      operations.user.addToken({
-        token,
-      }),
-    );
-  }, [dispatch, token]);
 
   const {
     register,
     handleSubmit,
-    getValues,
     formState: { errors, isValid },
   } = useForm<FormValues>({ mode: 'all' });
 
-  const hidePassword = () => {
-    if (!hidePasswordState) {
-      setHidePasswordState(true);
-    } else {
-      setHidePasswordState(false);
-    }
-  };
-
-  const hidePasswordConfirmation = () => {
-    if (!hidePasswordConfirmationState) {
-      setHidePasswordConfirmationState(true);
-    } else {
-      setHidePasswordConfirmationState(false);
-    }
-  };
-
   return (
-    <LoginContainer>
+    <>
+      <ToastContainer />
       <Root>
         <TestContain>
-          <Welcome>New Password</Welcome>
-          <Text>Come up with a new password</Text>
+          <Welcome>Password Reset</Welcome>
+          <Text>Enter your email to receive instructions on how to reset your password.</Text>
           <Form onSubmit={handleSubmit(onSubmit)}>
             <FieldContain>
-              <Label>Password</Label>
-              <EyePassword
-                src={hidePasswordState ? eyeImage : eyeOffImage}
-                onClick={hidePassword}
-              />
+              <Label>Email</Label>
               <LoginInput
                 containerStyle={styleInput}
-                placeholder="Enter password"
-                typeInput={hidePasswordState ? 'text' : 'password'}
-                register={register('password', {
+                placeholder="Enter email"
+                register={register('email', {
                   required: 'This field is required',
                   minLength: {
                     value: 3,
                     message: 'to very small',
                   },
-                })}
-                state={errors.password ? InputState.error : InputState.normal}
-              />
-              {errors.password && (
-                <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>
-              )}
-            </FieldContain>
-            <FieldContain>
-              <Label>Password Confirmation</Label>
-              <EyePassword
-                src={hidePasswordConfirmationState ? eyeImage : eyeOffImage}
-                onClick={hidePasswordConfirmation}
-              />
-              <LoginInput
-                containerStyle={styleInput}
-                placeholder="Enter password"
-                typeInput={hidePasswordConfirmationState ? 'text' : 'password'}
-                register={register('passwordConfirm', {
-                  required: 'This field is required',
-                  minLength: {
-                    value: 3,
-                    message: 'to very small',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'invalid email address',
                   },
-                  validate: (value) =>
-                    value === getValues('password') || 'The passwords do not match',
                 })}
-                state={errors.passwordConfirm ? InputState.error : InputState.normal}
+                state={errors.email ? InputState.error : InputState.normal}
               />
-              {errors.passwordConfirm && (
-                <ErrorMessage>{errors?.passwordConfirm?.message || 'Error'}</ErrorMessage>
-              )}
+              {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
             </FieldContain>
             <PrimeButton
               isLoading={user.status === 'Loading' && true}
@@ -145,11 +82,11 @@ const ChangePasswordScreen: React.FC<any> = () => {
         </TestContain>
         <BackToLogin to="/">Return to Login</BackToLogin>
       </Root>
-    </LoginContainer>
+    </>
   );
 };
 
-export default ChangePasswordScreen;
+export default ResetPasswordScreen;
 
 const Root = styled.section`
   width: 100%;
@@ -245,13 +182,4 @@ const BackToLogin = styled(Link)`
   &:hover {
     background: rgba(18, 36, 52, 0.25);
   };
-`;
-
-const EyePassword = styled.img`
-  height: 24px;
-  width: 24px;
-  position: absolute;
-  top: 35%;
-  left: 89%;
-  cursor: pointer;
 `;

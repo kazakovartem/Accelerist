@@ -1,14 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { createGlobalStyle } from 'styled-components';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { store, persistor } from './state/store';
-import RubikMedium from './assets/founts/Rubik-Medium.ttf';
-import RubikRegular from './assets/founts/Rubik-Regular.ttf';
-import GothamRounded from './assets/founts/GothamRoundedMedium.otf';
+import RubikMedium from './assets/fonts/Rubik-Medium.ttf';
+import RubikRegular from './assets/fonts/Rubik-Regular.ttf';
+import GothamRounded from './assets/fonts/GothamRoundedMedium.otf';
 
 const Global = createGlobalStyle`
 @font-face {
@@ -44,15 +45,17 @@ body h1 {
   margin: 0;
 }
 `;
-// font-family: 'Rubik-Regular';
+
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <Global />
-        <App />
-      </PersistGate>
-    </Provider>
+    <BrowserRouter>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <Global />
+          <App />
+        </PersistGate>
+      </Provider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById('root'),
 );

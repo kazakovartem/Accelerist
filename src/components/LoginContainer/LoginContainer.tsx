@@ -1,24 +1,11 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
 import styled, { CSSProp } from 'styled-components';
-import img from '../../assets/image/LoginImage.png';
-import logo from '../../assets/image/LoginLogo.svg';
+import img from '../../assets/images/background-login-screen.png';
+import logo from '../../assets/images/logo-login-screen.svg';
+import { sizeScreen } from '../../types';
 
-interface PrimeButtonProps {
-  children: React.ReactNode;
-}
-
-enum typeButton {
-  normal,
-  hover,
-}
-
-const size = {
-  mobile: '375px',
-  tablet: '768px',
-  laptop: '1440px',
-};
-
-const LoginContainer: React.FC<PrimeButtonProps> = ({ children }) => {
+const LoginContainer = () => {
   const rtt = 42;
   return (
     <Root>
@@ -26,7 +13,9 @@ const LoginContainer: React.FC<PrimeButtonProps> = ({ children }) => {
         <Logo src={logo} alt="main logo" />
         <TextHeader>ACCELERIST</TextHeader>
       </Header>
-      <Content>{children}</Content>
+      <Content>
+        <Outlet />
+      </Content>
     </Root>
   );
 };
@@ -73,10 +62,10 @@ const Content = styled.section`
   align-items: center;
   box-sizing: border-box;
   padding: 73px 0 20px 0;
-  @media (max-width: ${size.tablet}) {
+  @media (max-width: ${sizeScreen.tablet}) {
     padding: 120px 15px 20px 15px;
   }
-  @media (max-width: ${size.mobile}) {
+  @media (max-width: ${sizeScreen.mobile}) {
     padding: 20px 16px 20px 16px;
   }
 `;

@@ -42,10 +42,10 @@ const Input = styled.input<{ $CSS: CSSProp }>`
   box-sizing: border-box;
   border: 1px solid #E8E8E8;
   font-family: 'Rubik-Regular';
-  Font size: 16px;
+  font-size: 16px;
+  box-sizing: border-box;
+  line-height: 155%;
   color: #737373;
-  Line height: 25px;
-  Line height: 155%;
   ${({ $CSS }) => $CSS};
   &:hover {
     background-color: #FFF;
@@ -56,4 +56,7 @@ const Input = styled.input<{ $CSS: CSSProp }>`
   &:focus-visible {
     outline: -webkit-focus-ring-color auto 0px;
   };
+  &::placeholder {
+    color: #737373;
+  }
 `;

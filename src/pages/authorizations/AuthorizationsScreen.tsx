@@ -7,11 +7,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PrimeButton from '../../UI/PrimeButton';
 import { operations, selectors } from '../../state/ducks/ducks';
-import LoginContainer from '../../UI/LoginContainer';
 import LoginInput from '../../UI/LoginInput';
-import eyeImage from '../../assets/image/eye.svg';
-import eyeOffImage from '../../assets/image/eyeOff.svg';
-import checkImage from '../../assets/image/Check.svg';
+import eyeImage from '../../assets/images/eye-password-show.svg';
+import eyeOffImage from '../../assets/images/eye-password-hide.svg';
+import checkImage from '../../assets/images/check-box-done.svg';
 import { sizeScreen } from '../../types';
 
 enum color {
@@ -39,7 +38,7 @@ type FormValues = {
   password: string;
 };
 
-const AuthorizationsScreen: React.FC<any> = () => {
+const AuthorizationsScreen = () => {
   const styleButton = 'max-height: 46px;';
   const styleInput = 'max-height: 46px;';
   const dispatch = useDispatch();
@@ -65,19 +64,25 @@ const AuthorizationsScreen: React.FC<any> = () => {
     handleSubmit,
     reset,
     formState: { errors, isValid },
-  } = useForm<FormValues>({ mode: 'onBlur' });
+  } = useForm<FormValues>({ mode: 'all' });
 
-  async function onSubmit(data: FormValues) {
+  const onSubmit = async (data: FormValues) => {
     if (stateScreen === ScreenState.register) {
       const response = await dispatch(
         operations.user.signUpUser({ email: data.email, password: data.password }),
       );
-      toast(user.error, options);
+      console.log(response);
+      if (operations.user.signUpUser.fulfilled.match(response)) {
+        //  toast(user.error, options);
+      }
+      if (response.payload) {
+        toast(response.payload, options);
+      }
     } else {
       await dispatch(operations.user.signInUser({ email: data.email, password: data.password }));
       toast(user.error, options);
     }
-  }
+  };
 
   const tabReg = () => {
     setStateScreen(ScreenState.login);
@@ -110,103 +115,95 @@ const AuthorizationsScreen: React.FC<any> = () => {
   return (
     <>
       <ToastContainer />
-      <LoginContainer>
-        <TestContain>
-          <Welcome>Welcome to Accelerist</Welcome>
-          <Tab>
-            <TabBut
-              onClick={tabReg}
-              tabIndex={0}
-              backgroundColor={stateScreen === ScreenState.login ? color.deactivate : color.active}
-            >
-              Register
-            </TabBut>
-            <TabBut
-              onClick={tabLogin}
-              tabIndex={0}
-              backgroundColor={
-                stateScreen === ScreenState.register ? color.deactivate : color.active
-              }
-            >
-              Login
-            </TabBut>
-          </Tab>
-          <Form onSubmit={handleSubmit(onSubmit)}>
-            <FieldContain>
-              <Label>Email</Label>
-              <LoginInput
-                containerStyle={styleInput}
-                placeholder="Enter email"
-                register={register('email', {
-                  required: 'This field is required',
-                  minLength: {
-                    value: 3,
-                    message: 'to very small',
-                  },
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: 'invalid email address',
-                  },
-                })}
-                state={errors.email ? InputState.error : InputState.normal}
-              />
-              {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
-            </FieldContain>
 
-            <FieldContain>
-              <Label>Password</Label>
-              <EyePassword
-                src={hidePasswordState ? eyeImage : eyeOffImage}
-                onClick={hidePassword}
-              />
-              <LoginInput
-                containerStyle={styleInput}
-                placeholder="Enter password"
-                typeInput={hidePasswordState ? 'text' : 'password'}
-                register={register('password', {
-                  required: 'This field is required',
-                  minLength: {
-                    value: 3,
-                    message: 'to very small',
-                  },
-                })}
-                state={errors.password ? InputState.error : InputState.normal}
-              />
-              {errors.password && (
-                <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>
-              )}
-            </FieldContain>
-            {stateScreen === ScreenState.login && (
-              <LoginRemember>
-                <PasswordRemember onClick={checkRemember}>
-                  <PasswordCheck>
-                    {checkRememberPassword && <CheckImage src={checkImage} />}
-                  </PasswordCheck>
-                  Remember
-                </PasswordRemember>
-                <ForgotPassword to="/reset">Forgot password?</ForgotPassword>
-              </LoginRemember>
-            )}
-            {stateScreen === ScreenState.register && (
-              <RegisterAgreement>
-                I agree that by clicking
-                {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
-                <strong>“Registration”</strong> I accept the{' '}
-                <RegisterPolicy to="/">Terms Of Service</RegisterPolicy>
-                {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
-                and <RegisterPolicy to="/">Privacy Policy</RegisterPolicy>
-              </RegisterAgreement>
-            )}
-            <PrimeButton
-              isLoading={user.status === 'Loading' && true}
-              label="Login"
-              containerStyle={styleButton}
-              useButton={() => handleSubmit(onSubmit)}
-              disable={!isValid}
+      <TestContain>
+        <Welcome>Welcome to Accelerist</Welcome>
+        <Tab>
+          <TabBut
+            onClick={tabReg}
+            tabIndex={0}
+            backgroundColor={stateScreen === ScreenState.login ? color.deactivate : color.active}
+          >
+            Register
+          </TabBut>
+          <TabBut
+            onClick={tabLogin}
+            tabIndex={0}
+            backgroundColor={stateScreen === ScreenState.register ? color.deactivate : color.active}
+          >
+            Login
+          </TabBut>
+        </Tab>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <FieldContain>
+            <Label>Email</Label>
+            <LoginInput
+              containerStyle={styleInput}
+              placeholder="Enter email"
+              register={register('email', {
+                required: 'This field is required',
+                minLength: {
+                  value: 3,
+                  message: 'to very small',
+                },
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'invalid email address',
+                },
+              })}
+              state={errors.email ? InputState.error : InputState.normal}
             />
-          </Form>
-        </TestContain>
-      </LoginContainer>
+            {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
+          </FieldContain>
+
+          <FieldContain>
+            <Label>Password</Label>
+            <EyePassword src={hidePasswordState ? eyeImage : eyeOffImage} onClick={hidePassword} />
+            <LoginInput
+              containerStyle={styleInput}
+              placeholder="Enter password"
+              typeInput={hidePasswordState ? 'text' : 'password'}
+              register={register('password', {
+                required: 'This field is required',
+                minLength: {
+                  value: 3,
+                  message: 'to very small',
+                },
+              })}
+              state={errors.password ? InputState.error : InputState.normal}
+            />
+            {errors.password && <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>}
+          </FieldContain>
+          {stateScreen === ScreenState.login && (
+            <LoginRemember>
+              <PasswordRemember onClick={checkRemember}>
+                <PasswordCheck>
+                  {checkRememberPassword && <CheckImage src={checkImage} />}
+                </PasswordCheck>
+                Remember
+              </PasswordRemember>
+              <ForgotPassword to="/reset">Forgot password?</ForgotPassword>
+            </LoginRemember>
+          )}
+          {stateScreen === ScreenState.register && (
+            <RegisterAgreement>
+              I agree that by clicking
+              {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
+              <strong>“Registration”</strong> I accept the{' '}
+              <RegisterPolicy to="/">Terms Of Service</RegisterPolicy>
+              {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
+              and <RegisterPolicy to="/">Privacy Policy</RegisterPolicy>
+            </RegisterAgreement>
+          )}
+          <PrimeButton
+            isLoading={user.status === 'Loading' && true}
+            label={stateScreen === ScreenState.login ? "Login" : "Registration"}
+            containerStyle={styleButton}
+            useButton={() => handleSubmit(onSubmit)}
+            disable={!isValid}
+          />
+        </Form>
+      </TestContain>
     </>
   );
 };
@@ -246,7 +243,7 @@ const Tab = styled.div`
   background-color: #F8F8F8;
   min-width: 100%;
   margin-top: 25px;
-  margin-bottom: 34px;
+  margin-bottom: 20px;
   height: 40px;
   display: flex;
   flex-direction: row;
@@ -284,17 +281,20 @@ const Label = styled.label`
   color: #737373;
   text-align: left;
   margin-bottom: 5px;
+  box-sizing: border-box;
 `;
 
 const Form = styled.form`
   width: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
 
 `;
 
-const ErrorMessage = styled.span`
+const ErrorMessage = styled.p`
   font-size: 12px;
+  position: absolute;
   font-family: 'Rubik-Regular';
   color: red;
   text-align: left;
@@ -305,7 +305,8 @@ const FieldContain = styled.div`
   position: relative;
   width: 100%;
   height: 65px;
-  margin-bottom: 26px
+  margin-bottom: 34px;
+  box-sizing: border-box;
 `;
 
 const LoginRemember = styled.div`
@@ -357,6 +358,7 @@ const EyePassword = styled.img`
   position: absolute;
   top: 54%;
   left: 89%;
+  color: #737373;
   cursor: pointer;
 `;
 

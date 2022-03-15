@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { operations, selectors } from '../../state/ducks/ducks';
 // import { useNavigate } from 'react-router-dom';
 import PrimeButton from '../../UI/PrimeButton';
-import HeaderContent from '../../UI/HeaderContent';
 
 const size = {
   mobile: '375px',
@@ -12,7 +11,7 @@ const size = {
   laptop: '1440px',
 };
 
-const DeckScreen: React.FC<any> = () => {
+const DeckScreen = () => {
   const user = useSelector(selectors.user.selectUser());
   const styleButton = 'max-height: 46px;';
   // const nav = useNavigate();
@@ -23,7 +22,6 @@ const DeckScreen: React.FC<any> = () => {
   // <PrimeButton label="go to" containerStyle={style} useButton={() => onSubmit()} />
   return (
     <Root>
-      <HeaderContent label="Dash" />
       <TestContain>
         Desk
         <PrimeButton label="Login" containerStyle={styleButton} useButton={onSubmit} />

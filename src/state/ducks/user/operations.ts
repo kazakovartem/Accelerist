@@ -8,9 +8,25 @@ import {
   SignUpPayload,
   ChangePasswordPayload,
   AddTokenPayload,
+  UserSignUpResponse,
 } from './types';
 
-type DefaultRejectValue = string;
+type DefaultRejectValue = {
+  error: { message: string };
+  meta: {
+    aborted: boolean;
+    arg: {
+      email: string;
+      password: string;
+    };
+    condition: boolean;
+    rejectedWithValue: boolean;
+    requestId: string;
+    requestStatus: string;
+  };
+  payload: string;
+  type: string;
+};
 type AppDispatch = typeof store.dispatch;
 type State = {
   user: {
@@ -37,7 +53,7 @@ export const signInUser = createAsyncThunk<
   UserResponse,
   SignInPayload,
   ExtraParamsThunkType<DefaultRejectValue>
->('user/sign_in', async ({ email, password }: SignUpPayload, { extra, rejectWithValue }) => {
+>('user/sign_in', async ({ email, password }: SignInPayload, { extra, rejectWithValue }) => {
   try {
     const response = await extra.api.user.signIn(email, password);
     if (response.status === 201) {
@@ -55,7 +71,7 @@ export const signInUser = createAsyncThunk<
 });
 
 export const signUpUser = createAsyncThunk<
-  UserResponse,
+  UserSignUpResponse,
   SignUpPayload,
   ExtraParamsThunkType<DefaultRejectValue>
 >('user/sign_up', async ({ email, password }: SignUpPayload, { extra, rejectWithValue }) => {

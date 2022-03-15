@@ -1,22 +1,10 @@
 import React from 'react';
 import styled, { CSSProp } from 'styled-components';
-import img from '../../assets/image/LoginImage.png';
-import logo from '../../assets/image/logo.svg';
+import logo from '../../assets/images/logo-main-screen.svg';
 
 interface HeaderContentProps {
   label: string;
 }
-
-enum typeButton {
-  normal,
-  hover,
-}
-
-const size = {
-  mobile: '375px',
-  tablet: '768px',
-  laptop: '1440px',
-};
 
 const HeaderContent: React.FC<HeaderContentProps> = ({ label }) => {
   const rtt = 42;
