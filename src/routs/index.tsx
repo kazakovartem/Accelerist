@@ -3,10 +3,10 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../state/ducks/ducks';
 import LoginContainer from '../components/LoginContainer';
-import AuthorizationsScreen from '../pages/authorizations';
-import DeckScreen from '../pages/deck';
-import ResetPassword from '../pages/resetPassword';
-import ChangePassword from '../pages/changePassword';
+import AuthorizationsScreen from '../pages/Authorizations';
+import DeckScreen from '../pages/Deck';
+import ResetPassword from '../pages/ResetPassword';
+import ChangePassword from '../pages/ChangePassword';
 import routsConstant from '../types/constant-routs';
 
 const AllAppRouts = () => {

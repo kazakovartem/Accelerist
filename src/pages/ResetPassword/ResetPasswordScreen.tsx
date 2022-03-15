@@ -142,11 +142,12 @@ const Form = styled.form`
 
 `;
 
-const ErrorMessage = styled.span`
+const ErrorMessage = styled.p`
   font-size: 12px;
   font-family: 'Rubik-Regular';
   color: red;
   text-align: left;
+  position: absolute;
   margin-bottom: 5px;
 `;
 
