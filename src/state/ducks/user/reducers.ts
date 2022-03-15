@@ -91,7 +91,7 @@ const User = createSlice({
       .addCase(operations.signUpUser.rejected, (state, action) => {
         // failed signUpUser
         state.status = 'Error';
-        state.error = action.payload!;
+        state.error = action.payload!.payload;
       })
       .addCase(operations.sendMail.pending, (state) => {
         // started sendMail
@@ -106,7 +106,7 @@ const User = createSlice({
       .addCase(operations.sendMail.rejected, (state, action) => {
         // failed sendMail
         state.status = 'Error';
-        state.error = action.payload!;
+        state.error = action.payload!.payload;
       })
       .addCase(operations.changePassword.pending, (state) => {
         // started changePassword
@@ -121,7 +121,7 @@ const User = createSlice({
       .addCase(operations.changePassword.rejected, (state, action) => {
         // failed changePassword
         state.status = 'Error';
-        state.error = action.payload!;
+        state.error = action.payload!.payload;
       })
       .addCase(operations.addToken.fulfilled, (state, action) => {
         // started changePassword

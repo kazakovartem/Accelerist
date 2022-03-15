@@ -42,6 +42,9 @@ export type ExtraParamsThunkType<T = DefaultRejectValue> = {
   rejectValue: T;
   dispatch: AppDispatch;
   state: State;
+  serializedErrorType: {
+    payload: string;
+  }
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types

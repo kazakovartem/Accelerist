@@ -20,16 +20,20 @@ type FormValues = {
   email: string;
 };
 
+const options = {
+  autoClose: 3000,
+  position: toast.POSITION.TOP_LEFT,
+  pauseOnHover: false,
+};
+
 const ResetPasswordScreen = () => {
   const styleButton = 'max-height: 46px;';
   const styleInput = 'max-height: 46px;';
+
   const dispatch = useDispatch();
-  const options = {
-    autoClose: 3000,
-    position: toast.POSITION.TOP_LEFT,
-    pauseOnHover: false,
-  };
+
   const user = useSelector(selectors.user.selectUser());
+
   // const nav = useNavigate();
   const onSubmit = (data: FormValues) => {
     // nav('/');

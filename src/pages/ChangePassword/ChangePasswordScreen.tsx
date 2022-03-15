@@ -23,19 +23,25 @@ type FormValues = {
   password: string;
 };
 
+const options = {
+  autoClose: 3000,
+  position: toast.POSITION.TOP_LEFT,
+  pauseOnHover: false,
+};
+
 const ChangePasswordScreen = () => {
   const styleButton = 'max-height: 46px;';
   const styleInput = 'max-height: 46px;';
+
   const dispatch = useDispatch();
+
   const user = useSelector(selectors.user.selectUser());
+
   const [hidePasswordState, setHidePasswordState] = useState(false);
   const [hidePasswordConfirmationState, setHidePasswordConfirmationState] = useState(false);
+
   const token = useLocation().search.slice(20);
-  const options = {
-    autoClose: 3000,
-    position: toast.POSITION.TOP_LEFT,
-    pauseOnHover: false,
-  };
+
   // const nav = useNavigate();
   const onSubmit = (data: FormValues) => {
     // nav('/');

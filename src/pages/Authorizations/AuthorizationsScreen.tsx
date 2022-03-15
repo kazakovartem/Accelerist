@@ -38,27 +38,34 @@ type FormValues = {
   password: string;
 };
 
+const options = {
+  autoClose: 3000,
+  position: toast.POSITION.TOP_LEFT,
+  pauseOnHover: false,
+};
+
 const AuthorizationsScreen = () => {
   const styleButton = 'max-height: 46px;';
   const styleInput = 'max-height: 46px;';
+
   const dispatch = useDispatch();
   const nav = useNavigate();
+
   let location = ScreenState.login;
   if (useLocation().pathname === '/register') {
     location = ScreenState.register;
   }
-  const options = {
-    autoClose: 3000,
-    position: toast.POSITION.TOP_LEFT,
-    pauseOnHover: false,
-  };
+
   const [stateScreen, setStateScreen] = useState(location);
   const [checkRememberPassword, setCheckRememberPassword] = useState(false);
+  const [hidePasswordState, setHidePasswordState] = useState(false);
+
   useEffect(() => {
     setStateScreen(location);
   }, [location]);
-  const [hidePasswordState, setHidePasswordState] = useState(false);
+
   const user = useSelector(selectors.user.selectUser());
+
   const {
     register,
     handleSubmit,
@@ -71,7 +78,7 @@ const AuthorizationsScreen = () => {
       const response = await dispatch(
         operations.user.signUpUser({ email: data.email, password: data.password }),
       );
-      console.log(response);
+      console.log(response.payload);
       if (operations.user.signUpUser.fulfilled.match(response)) {
         //  toast(user.error, options);
       }
