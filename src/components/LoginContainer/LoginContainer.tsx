@@ -1,24 +1,21 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import styled, { CSSProp } from 'styled-components';
+import styled from 'styled-components';
 import img from '../../assets/images/background-login-screen.png';
 import logo from '../../assets/images/logo-login-screen.svg';
 import { sizeScreen } from '../../types';
 
-const LoginContainer = () => {
-  const rtt = 42;
-  return (
-    <Root>
-      <Header>
-        <Logo src={logo} alt="main logo" />
-        <TextHeader>ACCELERIST</TextHeader>
-      </Header>
-      <Content>
-        <Outlet />
-      </Content>
-    </Root>
-  );
-};
+const LoginContainer = () => (
+  <Root>
+    <Header>
+      <Logo src={logo} alt="main logo" />
+      <TextHeader>ACCELERIST</TextHeader>
+    </Header>
+    <Content>
+      <Outlet />
+    </Content>
+  </Root>
+);
 
 export default React.memo(LoginContainer);
 

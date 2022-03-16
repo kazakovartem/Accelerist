@@ -5,7 +5,7 @@ type UserState = {
   email: string;
   token: string;
   status: null | string;
-  error: null | string;
+  error: null | string | undefined;
   id: string;
   firstName: string;
   lastName: string;
@@ -91,7 +91,12 @@ const User = createSlice({
       .addCase(operations.signUpUser.rejected, (state, action) => {
         // failed signUpUser
         state.status = 'Error';
-        state.error = action.payload!.payload;
+        // state.error = action.payload;
+        if (action.payload) {
+          state.error = action.payload.errorMessage;
+        } else {
+          state.error = action.error!.message;
+        }
       })
       .addCase(operations.sendMail.pending, (state) => {
         // started sendMail

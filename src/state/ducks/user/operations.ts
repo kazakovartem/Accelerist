@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { AxiosError } from 'axios';
 import api from '../../../api';
 import { store } from '../../store';
 import {
@@ -42,9 +43,6 @@ export type ExtraParamsThunkType<T = DefaultRejectValue> = {
   rejectValue: T;
   dispatch: AppDispatch;
   state: State;
-  serializedErrorType: {
-    payload: string;
-  }
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
@@ -72,11 +70,25 @@ export const signInUser = createAsyncThunk<
     return rejectWithValue(error.message);
   }
 });
+// ExtraParamsThunkType<DefaultRejectValue>
+
+interface MyKnownError {
+  errorMessage: string;
+  payload: string;
+}
+
+interface ValidationErrors {
+  errorMessage: string
+  field_errors: Record<string, string>
+}
 
 export const signUpUser = createAsyncThunk<
   UserSignUpResponse,
   SignUpPayload,
-  ExtraParamsThunkType<DefaultRejectValue>
+  {
+    extra: { api: typeof api };
+    rejectValue: ValidationErrors;
+  }
 >('user/sign_up', async ({ email, password }: SignUpPayload, { extra, rejectWithValue }) => {
   try {
     const response = await extra.api.user.signUp(email, password);
@@ -90,7 +102,11 @@ export const signUpUser = createAsyncThunk<
     }
     return response.data;
   } catch (error: any) {
-    return rejectWithValue(error.message);
+    const err: AxiosError<ValidationErrors> = error;
+    if (!err.response) {
+      throw error;
+    }
+    return rejectWithValue(error.response.data);
   }
 });
 

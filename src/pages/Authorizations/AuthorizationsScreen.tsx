@@ -45,9 +45,6 @@ const options = {
 };
 
 const AuthorizationsScreen = () => {
-  const styleButton = 'max-height: 46px;';
-  const styleInput = 'max-height: 46px;';
-
   const dispatch = useDispatch();
   const nav = useNavigate();
 
@@ -78,7 +75,7 @@ const AuthorizationsScreen = () => {
       const response = await dispatch(
         operations.user.signUpUser({ email: data.email, password: data.password }),
       );
-      console.log(response.payload);
+      console.log(response);
       if (operations.user.signUpUser.fulfilled.match(response)) {
         //  toast(user.error, options);
       }
@@ -145,7 +142,7 @@ const AuthorizationsScreen = () => {
           <FieldContain>
             <Label>Email</Label>
             <LoginInput
-              containerStyle={styleInput}
+              maxHeight="46px"
               placeholder="Enter email"
               register={register('email', {
                 required: 'This field is required',
@@ -158,7 +155,7 @@ const AuthorizationsScreen = () => {
                   message: 'invalid email address',
                 },
               })}
-              state={errors.email ? InputState.error : InputState.normal}
+              errorState={typeof errors.email !== 'undefined'}
             />
             {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
           </FieldContain>
@@ -167,7 +164,7 @@ const AuthorizationsScreen = () => {
             <Label>Password</Label>
             <EyePassword src={hidePasswordState ? eyeImage : eyeOffImage} onClick={hidePassword} />
             <LoginInput
-              containerStyle={styleInput}
+              maxHeight="46px"
               placeholder="Enter password"
               typeInput={hidePasswordState ? 'text' : 'password'}
               register={register('password', {
@@ -177,7 +174,7 @@ const AuthorizationsScreen = () => {
                   message: 'to very small',
                 },
               })}
-              state={errors.password ? InputState.error : InputState.normal}
+              errorState={typeof errors.password !== 'undefined'}
             />
             {errors.password && <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>}
           </FieldContain>
@@ -204,10 +201,10 @@ const AuthorizationsScreen = () => {
           )}
           <PrimeButton
             isLoading={user.status === 'Loading' && true}
-            label={stateScreen === ScreenState.login ? "Login" : "Registration"}
-            containerStyle={styleButton}
+            label={stateScreen === ScreenState.login ? 'Login' : 'Registration'}
             useButton={() => handleSubmit(onSubmit)}
             disable={!isValid}
+            maxHeight="46px"
           />
         </Form>
       </TestContain>
@@ -375,9 +372,10 @@ const CheckImage = styled.img`
 `;
 
 const RegisterAgreement = styled.span`
-  width: 95%;
+  width: 100%;
   height: 28px;
   margin-bottom: 20px;
+  margin-top: 27px;
   color: #222222;
   text-align: center;
   font-size: 12px;

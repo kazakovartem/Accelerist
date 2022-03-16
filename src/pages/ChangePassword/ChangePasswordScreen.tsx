@@ -30,9 +30,6 @@ const options = {
 };
 
 const ChangePasswordScreen = () => {
-  const styleButton = 'max-height: 46px;';
-  const styleInput = 'max-height: 46px;';
-
   const dispatch = useDispatch();
 
   const user = useSelector(selectors.user.selectUser());
@@ -94,7 +91,7 @@ const ChangePasswordScreen = () => {
             <Label>Password</Label>
             <EyePassword src={hidePasswordState ? eyeImage : eyeOffImage} onClick={hidePassword} />
             <LoginInput
-              containerStyle={styleInput}
+              maxHeight="46px"
               placeholder="Enter password"
               typeInput={hidePasswordState ? 'text' : 'password'}
               register={register('password', {
@@ -104,7 +101,7 @@ const ChangePasswordScreen = () => {
                   message: 'to very small',
                 },
               })}
-              state={errors.password ? InputState.error : InputState.normal}
+              errorState={typeof errors.password !== 'undefined'}
             />
             {errors.password && <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>}
           </FieldContain>
@@ -115,7 +112,7 @@ const ChangePasswordScreen = () => {
               onClick={hidePasswordConfirmation}
             />
             <LoginInput
-              containerStyle={styleInput}
+              maxHeight="46px"
               placeholder="Enter password"
               typeInput={hidePasswordConfirmationState ? 'text' : 'password'}
               register={register('passwordConfirm', {
@@ -127,7 +124,7 @@ const ChangePasswordScreen = () => {
                 validate: (value) =>
                   value === getValues('password') || 'The passwords do not match',
               })}
-              state={errors.passwordConfirm ? InputState.error : InputState.normal}
+              errorState={typeof errors.passwordConfirm !== 'undefined'}
             />
             {errors.passwordConfirm && (
               <ErrorMessage>{errors?.passwordConfirm?.message || 'Error'}</ErrorMessage>
@@ -136,7 +133,7 @@ const ChangePasswordScreen = () => {
           <PrimeButton
             isLoading={user.status === 'Loading' && true}
             label="Reset"
-            containerStyle={styleButton}
+            maxHeight="46px"
             useButton={() => handleSubmit(onSubmit)}
             disable={!isValid}
           />

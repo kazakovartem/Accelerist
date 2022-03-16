@@ -27,9 +27,6 @@ const options = {
 };
 
 const ResetPasswordScreen = () => {
-  const styleButton = 'max-height: 46px;';
-  const styleInput = 'max-height: 46px;';
-
   const dispatch = useDispatch();
 
   const user = useSelector(selectors.user.selectUser());
@@ -58,7 +55,7 @@ const ResetPasswordScreen = () => {
             <FieldContain>
               <Label>Email</Label>
               <LoginInput
-                containerStyle={styleInput}
+                maxHeight="46px"
                 placeholder="Enter email"
                 register={register('email', {
                   required: 'This field is required',
@@ -71,14 +68,14 @@ const ResetPasswordScreen = () => {
                     message: 'invalid email address',
                   },
                 })}
-                state={errors.email ? InputState.error : InputState.normal}
+                errorState={typeof errors.email !== 'undefined'}
               />
               {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
             </FieldContain>
             <PrimeButton
               isLoading={user.status === 'Loading' && true}
               label="Reset"
-              containerStyle={styleButton}
+              maxHeight="46px"
               useButton={() => handleSubmit(onSubmit)}
               disable={!isValid}
             />

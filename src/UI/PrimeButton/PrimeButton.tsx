@@ -1,41 +1,43 @@
 import React from 'react';
-import styled, { CSSProp, keyframes } from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 interface PrimeButtonProps {
   label: string;
-  containerStyle: CSSProp;
   useButton(): void;
   isLoading?: boolean;
   disable?: boolean;
+  maxHeight: string;
 }
 
-enum typeButton {
-  normal,
-  hover,
+interface PropsTitle {
+  inputColor: string;
+}
+
+interface PropsBtn {
+  cursor: string;
+  maximumHeight: string;
+  background: string;
 }
 
 const PrimeButton: React.FC<PrimeButtonProps> = ({
   label,
-  containerStyle = {},
   useButton,
   isLoading,
   disable,
+  maxHeight,
 }) => {
-  // const theme = useTheme();
-  // console.log('Current theme: ', theme);
-  let style: CSSProp = containerStyle;
-  if (isLoading) {
-    // eslint-disable-next-line prefer-template
-    style = containerStyle + 'cursor: wait;background-color: #CEEDF9;';
-  }
-  if (disable) {
-    // eslint-disable-next-line prefer-template
-    style = containerStyle + 'cursor: no-drop;background-color: #CEEDF9;pointer-events: none;';
-  }
-
+  const disableCursor = disable ? 'no-drop' : 'pointer';
   return (
-    <Root $CSS={style} onClick={useButton} disabled={disable}>
-      {!isLoading && <Title>{label}</Title>}
+    <Root
+      maximumHeight={maxHeight}
+      onClick={useButton}
+      cursor={isLoading ? 'wait' : disableCursor}
+      background={disable ? '#CEEDF9' : '#2baee0'}
+      disabled={disable || isLoading}
+    >
+      {!isLoading && (
+        <Title inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}>{label}</Title>
+      )}
       {isLoading && <Spinner />}
     </Root>
   );
@@ -48,8 +50,8 @@ PrimeButton.defaultProps = {
 
 export default React.memo(PrimeButton);
 
-const Root = styled.button<{ $CSS: CSSProp }>`
-  background-color: #2baee0;
+const Root = styled.button<PropsBtn>`
+  background-color: ${(p) => p.background};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -58,12 +60,12 @@ const Root = styled.button<{ $CSS: CSSProp }>`
   height: 100%;
   text-align: center;
   border-radius: 6px;
-  cursor: pointer;
+  cursor: ${(p) => p.cursor};
   border: 0;
   font-family: 'Rubik-Regular';
-  ${({ $CSS }) => $CSS};
+  max-height: ${(p) => p.maximumHeight};
   &:hover {
-    background-color: #51C2EE;
+    background-color:${(p) => (p.background === '#CEEDF9' ? '#CEEDF9' : '#51C2EE')};
   };
   &:focus {
     background-color: #1DA7DC;
@@ -73,11 +75,12 @@ const Root = styled.button<{ $CSS: CSSProp }>`
   };
 `;
 
-const Title = styled.p`
+const Title = styled.p<PropsTitle>`
   font-weight: 500;
   font-size: 16px;
   text-align: center;
   color: #fff;
+  color: ${(p) => p.inputColor || '#fff'};
 `;
 
 const spin = keyframes`
