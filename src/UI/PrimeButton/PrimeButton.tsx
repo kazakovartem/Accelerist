@@ -6,7 +6,6 @@ interface PrimeButtonProps {
   useButton(): void;
   isLoading?: boolean;
   disable?: boolean;
-  maxHeight: string;
 }
 
 interface PropsTitle {
@@ -15,34 +14,27 @@ interface PropsTitle {
 
 interface PropsBtn {
   cursor: string;
-  maximumHeight: string;
   background: string;
+  inputColor: string;
 }
 
-const PrimeButton: React.FC<PrimeButtonProps> = ({
-  label,
-  useButton,
-  isLoading,
-  disable,
-  maxHeight,
-}) => {
+const PrimeButton: React.FC<PrimeButtonProps> = ({ label, useButton, isLoading, disable }) => {
   const disableCursor = disable ? 'no-drop' : 'pointer';
   return (
     <Root
-      maximumHeight={maxHeight}
       onClick={useButton}
       cursor={isLoading ? 'wait' : disableCursor}
       background={disable ? '#CEEDF9' : '#2baee0'}
       disabled={disable || isLoading}
+      inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}
     >
-      {!isLoading && (
-        <Title inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}>{label}</Title>
-      )}
+      {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
+      {!isLoading && <>{ label }</>}
       {isLoading && <Spinner />}
     </Root>
   );
 };
-
+// <Title inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}>{label}</Title>
 PrimeButton.defaultProps = {
   isLoading: false,
   disable: false,
@@ -57,13 +49,18 @@ const Root = styled.button<PropsBtn>`
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 100%;
   text-align: center;
   border-radius: 6px;
   cursor: ${(p) => p.cursor};
   border: 0;
-  font-family: 'Rubik-Regular';
-  max-height: ${(p) => p.maximumHeight};
+  font-family: 'Rubik-Medium';
+  height: 46px;
+  font-weight: 500;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  color: #fff;
+  color: ${(p) => p.inputColor || '#fff'};
   &:hover {
     background-color:${(p) => (p.background === '#CEEDF9' ? '#CEEDF9' : '#51C2EE')};
   };
@@ -73,14 +70,6 @@ const Root = styled.button<PropsBtn>`
   &:focus-visible {
     outline: -webkit-focus-ring-color auto 0px;
   };
-`;
-
-const Title = styled.p<PropsTitle>`
-  font-weight: 500;
-  font-size: 16px;
-  text-align: center;
-  color: #fff;
-  color: ${(p) => p.inputColor || '#fff'};
 `;
 
 const spin = keyframes`

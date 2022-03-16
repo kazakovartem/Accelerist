@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
+import { useTypedDispatch } from '../../state/store';
 import 'react-toastify/dist/ReactToastify.css';
 import { selectors, operations } from '../../state/ducks/ducks';
 import PrimeButton from '../../UI/PrimeButton';
@@ -11,12 +12,7 @@ import LoginInput from '../../UI/LoginInput';
 import eyeImage from '../../assets/images/eye-password-show.svg';
 import eyeOffImage from '../../assets/images/eye-password-hide.svg';
 import { sizeScreen } from '../../types';
-
-enum InputState {
-  normal = 'normal',
-  error = 'error',
-  disabled = 'disabled',
-}
+import routsConstant from '../../types/constant-routs';
 
 type FormValues = {
   passwordConfirm: string;
@@ -30,7 +26,8 @@ const options = {
 };
 
 const ChangePasswordScreen = () => {
-  const dispatch = useDispatch();
+  const dispatch = useTypedDispatch();
+  const nav = useNavigate();
 
   const user = useSelector(selectors.user.selectUser());
 
@@ -39,17 +36,6 @@ const ChangePasswordScreen = () => {
 
   const token = useLocation().search.slice(20);
 
-  // const nav = useNavigate();
-  const onSubmit = (data: FormValues) => {
-    // nav('/');
-    dispatch(
-      operations.user.changePassword({
-        passwordConfirm: data.passwordConfirm,
-        password: data.password,
-      }),
-    );
-    toast(user.error, options);
-  };
   useEffect(() => {
     dispatch(
       operations.user.addToken({
@@ -58,12 +44,29 @@ const ChangePasswordScreen = () => {
     );
   }, [dispatch, token]);
 
+  const onSubmit = async (data: FormValues) => {
+    const response = await dispatch(
+      operations.user.changePassword({
+        passwordConfirm: data.passwordConfirm,
+        password: data.password,
+      }),
+    );
+    if (operations.user.changePassword.fulfilled.match(response)) {
+      // success to change password
+      nav(routsConstant.SIGN_IN, { replace: true });
+    } else if (response.payload) {
+      toast(response.payload, options);
+    } else {
+      toast(response.error.message, options);
+    }
+  };
+
   const {
     register,
     handleSubmit,
     getValues,
     formState: { errors, isValid },
-  } = useForm<FormValues>({ mode: 'all' });
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   const hidePassword = () => {
     if (!hidePasswordState) {
@@ -82,65 +85,77 @@ const ChangePasswordScreen = () => {
   };
 
   return (
-    <Root>
-      <TestContain>
-        <Welcome>New Password</Welcome>
-        <Text>Come up with a new password</Text>
-        <Form onSubmit={handleSubmit(onSubmit)}>
-          <FieldContain>
-            <Label>Password</Label>
-            <EyePassword src={hidePasswordState ? eyeImage : eyeOffImage} onClick={hidePassword} />
-            <LoginInput
-              maxHeight="46px"
-              placeholder="Enter password"
-              typeInput={hidePasswordState ? 'text' : 'password'}
-              register={register('password', {
-                required: 'This field is required',
-                minLength: {
-                  value: 3,
-                  message: 'to very small',
-                },
-              })}
-              errorState={typeof errors.password !== 'undefined'}
-            />
-            {errors.password && <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>}
-          </FieldContain>
-          <FieldContain>
-            <Label>Password Confirmation</Label>
-            <EyePassword
-              src={hidePasswordConfirmationState ? eyeImage : eyeOffImage}
-              onClick={hidePasswordConfirmation}
-            />
-            <LoginInput
-              maxHeight="46px"
-              placeholder="Enter password"
-              typeInput={hidePasswordConfirmationState ? 'text' : 'password'}
-              register={register('passwordConfirm', {
-                required: 'This field is required',
-                minLength: {
-                  value: 3,
-                  message: 'to very small',
-                },
-                validate: (value) =>
-                  value === getValues('password') || 'The passwords do not match',
-              })}
-              errorState={typeof errors.passwordConfirm !== 'undefined'}
-            />
-            {errors.passwordConfirm && (
-              <ErrorMessage>{errors?.passwordConfirm?.message || 'Error'}</ErrorMessage>
-            )}
-          </FieldContain>
-          <PrimeButton
-            isLoading={user.status === 'Loading' && true}
-            label="Reset"
-            maxHeight="46px"
-            useButton={() => handleSubmit(onSubmit)}
-            disable={!isValid}
-          />
-        </Form>
-      </TestContain>
-      <BackToLogin to="/">Return to Login</BackToLogin>
-    </Root>
+    <>
+      <ToastContainer />
+
+      <Root>
+        <TestContain>
+          <Welcome>New Password</Welcome>
+          <Text>Come up with a new password</Text>
+
+          <Form onSubmit={handleSubmit(onSubmit)}>
+            <FieldContain>
+              <Label>Password</Label>
+              <EyePassword
+                src={hidePasswordState ? eyeImage : eyeOffImage}
+                onClick={hidePassword}
+              />
+              <LoginInput
+                placeholder="Enter new password"
+                typeInput={hidePasswordState ? 'text' : 'password'}
+                register={register('password', {
+                  required: 'This field is required',
+                  minLength: {
+                    value: 3,
+                    message: 'to very small',
+                  },
+                })}
+                errorState={typeof errors.password !== 'undefined'}
+              />
+              {errors.password && (
+                <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>
+              )}
+            </FieldContain>
+
+            <FieldContain>
+              <Label>Password Confirmation</Label>
+              <EyePassword
+                src={hidePasswordConfirmationState ? eyeImage : eyeOffImage}
+                onClick={hidePasswordConfirmation}
+              />
+              <LoginInput
+                placeholder="Enter password confirmation"
+                typeInput={hidePasswordConfirmationState ? 'text' : 'password'}
+                register={register('passwordConfirm', {
+                  required: 'This field is required',
+                  minLength: {
+                    value: 3,
+                    message: 'to very small',
+                  },
+                  validate: (value) =>
+                    value === getValues('password') || 'The passwords do not match',
+                })}
+                errorState={typeof errors.passwordConfirm !== 'undefined'}
+              />
+              {errors.passwordConfirm && (
+                <ErrorMessage>{errors?.passwordConfirm?.message || 'Error'}</ErrorMessage>
+              )}
+            </FieldContain>
+
+            <MyButton>
+              <PrimeButton
+                isLoading={user.status === 'Loading' && true}
+                label="Reset"
+                useButton={() => handleSubmit(onSubmit)}
+                disable={!isValid}
+              />
+            </MyButton>
+
+          </Form>
+        </TestContain>
+        <BackToLogin to="/">Return to Login</BackToLogin>
+      </Root>
+    </>
   );
 };
 
@@ -180,6 +195,7 @@ const Welcome = styled.h1`
   font-weight: 500;
   font-family: 'Rubik-Medium';
   font-size: 24px;
+  line-height: 148%;
   color: #122434;
   margin-bottom: 20px;
 `;
@@ -220,13 +236,12 @@ const Label = styled.label`
 const FieldContain = styled.div`
   position: relative;
   width: 100%;
-  height: 95px;
   margin-bottom: 26px
 `;
 
 const BackToLogin = styled(Link)`
   text-decoration: none;
-  font-family: 'Rubik-Regular';
+  font-family: 'Rubik-Medium';
   line-height: 150%;
   width: 138px;
   height: 36px;
@@ -242,12 +257,15 @@ const BackToLogin = styled(Link)`
     background: rgba(18, 36, 52, 0.25);
   };
 `;
+const MyButton = styled.div`
+  margin-top: 16px;
+`;
 
 const EyePassword = styled.img`
   height: 24px;
   width: 24px;
   position: absolute;
-  top: 35%;
-  left: 89%;
+  top: 46%;
+  left: 89.2%;
   cursor: pointer;
 `;

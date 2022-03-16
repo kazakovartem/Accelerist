@@ -1,8 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import api from '../../../api';
-import { store } from '../../store';
-
 import {
   UserResponse,
   SignInPayload,
@@ -11,70 +9,20 @@ import {
   ChangePasswordPayload,
   AddTokenPayload,
   UserSignUpResponse,
+  DefaultRejectValue,
 } from './types';
-
-type DefaultRejectValue = {
-  error: { message: string };
-  meta: {
-    aborted: boolean;
-    arg: {
-      email?: string;
-      password?: string;
-    };
-    condition: boolean;
-    rejectedWithValue: boolean;
-    requestId: string;
-    requestStatus: string;
-  };
-  payload: string;
-  type: string;
-};
-
-type DefaultFulfilledValue = {
-  meta: {
-    aborted: boolean;
-    arg: {
-      email?: string;
-      password?: string;
-    };
-    condition: boolean;
-    rejectedWithValue: boolean;
-    requestId: string;
-    requestStatus: string;
-  };
-  payload: UserResponse;
-  type: string;
-};
-
-type AppDispatch = typeof store.dispatch;
-type State = {
-  user: {
-    email: string;
-    password: string;
-    token: string;
-    status: null | string;
-    error: null | string;
-  };
-};
-export type ExtraParamsThunkType<T = DefaultRejectValue> = {
-  extra: { api: typeof api };
-  rejectValue: T;
-  dispatch: AppDispatch;
-  state: State;
-};
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 type SendMailResponse = {};
 
 type AddTokenResponse = string;
-// ExtraParamsThunkType<DefaultRejectValue>
+
 export const signInUser = createAsyncThunk<
   UserResponse,
   SignInPayload,
   {
     extra: { api: typeof api };
     rejectValue: DefaultRejectValue;
-    fulfilledMeta: DefaultFulfilledValue;
   }
 >('user/sign_in', async ({ email, password }: SignInPayload, { extra, rejectWithValue }) => {
   try {
@@ -87,7 +35,6 @@ export const signInUser = createAsyncThunk<
     } else {
       throw new Error('internal server error');
     }
-    return response.data;
   } catch (error: any) {
     const err: AxiosError<ValidationErrors> = error;
     if (!err.response) {
@@ -96,11 +43,10 @@ export const signInUser = createAsyncThunk<
     return rejectWithValue(error.response.data);
   }
 });
-// ExtraParamsThunkType<DefaultRejectValue>
 
 interface ValidationErrors {
-  errorMessage: string
-  field_errors: Record<string, string>
+  errorMessage: string;
+  field_errors: Record<string, string>;
 }
 
 export const signUpUser = createAsyncThunk<
@@ -108,7 +54,7 @@ export const signUpUser = createAsyncThunk<
   SignUpPayload,
   {
     extra: { api: typeof api };
-    rejectValue: ValidationErrors;
+    rejectValue: DefaultRejectValue;
   }
 >('user/sign_up', async ({ email, password }: SignUpPayload, { extra, rejectWithValue }) => {
   try {
@@ -121,7 +67,6 @@ export const signUpUser = createAsyncThunk<
     } else {
       throw new Error('internal server error');
     }
-    return response.data;
   } catch (error: any) {
     const err: AxiosError<ValidationErrors> = error;
     if (!err.response) {
@@ -134,7 +79,10 @@ export const signUpUser = createAsyncThunk<
 export const sendMail = createAsyncThunk<
   SendMailResponse,
   SendMailPayload,
-  ExtraParamsThunkType<DefaultRejectValue>
+  {
+    extra: { api: typeof api };
+    rejectValue: DefaultRejectValue;
+  }
 >('user/send_mail', async ({ email }: SendMailPayload, { extra, rejectWithValue }) => {
   try {
     const response = await extra.api.user.sendMail(email);
@@ -146,16 +94,22 @@ export const sendMail = createAsyncThunk<
     } else {
       throw new Error('internal server error');
     }
-    return response.data;
   } catch (error: any) {
-    return rejectWithValue(error.message);
+    const err: AxiosError<ValidationErrors> = error;
+    if (!err.response) {
+      throw error;
+    }
+    return rejectWithValue(error.response.data);
   }
 });
 
 export const changePassword = createAsyncThunk<
   SendMailResponse,
   ChangePasswordPayload,
-  ExtraParamsThunkType<DefaultRejectValue>
+  {
+    extra: { api: typeof api };
+    rejectValue: DefaultRejectValue;
+  }
 >(
   'user/change_password',
   async ({ password, passwordConfirm }: ChangePasswordPayload, { extra, rejectWithValue }) => {
@@ -169,9 +123,12 @@ export const changePassword = createAsyncThunk<
       } else {
         throw new Error('internal server error');
       }
-      return response.data;
     } catch (error: any) {
-      return rejectWithValue(error.message);
+      const err: AxiosError<ValidationErrors> = error;
+      if (!err.response) {
+        throw error;
+      }
+      return rejectWithValue(error.response.data);
     }
   },
 );
@@ -179,7 +136,10 @@ export const changePassword = createAsyncThunk<
 export const addToken = createAsyncThunk<
   AddTokenResponse,
   AddTokenPayload,
-  ExtraParamsThunkType<DefaultRejectValue>
+  {
+    extra: { api: typeof api };
+    rejectValue: DefaultRejectValue;
+  }
 >('user/add_token', async ({ token }: AddTokenPayload, { rejectWithValue }) => {
   try {
     return token;

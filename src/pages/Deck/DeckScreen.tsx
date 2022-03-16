@@ -24,7 +24,7 @@ const DeckScreen = () => {
     <Root>
       <TestContain>
         Desk
-        <PrimeButton label="Login" maxHeight="46px" useButton={onSubmit} />
+        <PrimeButton label="Login" useButton={onSubmit} />
       </TestContain>
     </Root>
   );

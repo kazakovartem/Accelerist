@@ -1,20 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
+import { useTypedDispatch } from '../../state/store';
 import 'react-toastify/dist/ReactToastify.css';
 import { selectors, operations } from '../../state/ducks/ducks';
 import PrimeButton from '../../UI/PrimeButton';
 import LoginInput from '../../UI/LoginInput';
 import { sizeScreen } from '../../types';
-
-enum InputState {
-  normal = 'normal',
-  error = 'error',
-  disabled = 'disabled',
-}
+import routsConstant from '../../types/constant-routs';
 
 type FormValues = {
   email: string;
@@ -27,35 +23,43 @@ const options = {
 };
 
 const ResetPasswordScreen = () => {
-  const dispatch = useDispatch();
-
+  const dispatch = useTypedDispatch();
+  const nav = useNavigate();
   const user = useSelector(selectors.user.selectUser());
 
-  // const nav = useNavigate();
-  const onSubmit = (data: FormValues) => {
-    // nav('/');
-    dispatch(operations.user.sendMail({ email: data.email }));
-    toast(user.error, options);
+  const onSubmit = async (data: FormValues) => {
+    const response = await dispatch(
+      operations.user.sendMail({ email: data.email }),
+    );
+    if (operations.user.sendMail.fulfilled.match(response)) {
+      // success to send mail
+      nav(routsConstant.SIGN_IN, { replace: true });
+    } else if (response.payload) {
+      toast(response.payload, options);
+    } else {
+      toast(response.error.message, options);
+    }
   };
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<FormValues>({ mode: 'all' });
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   return (
     <>
       <ToastContainer />
       <Root>
+
         <TestContain>
           <Welcome>Password Reset</Welcome>
           <Text>Enter your email to receive instructions on how to reset your password.</Text>
           <Form onSubmit={handleSubmit(onSubmit)}>
+
             <FieldContain>
               <Label>Email</Label>
               <LoginInput
-                maxHeight="46px"
                 placeholder="Enter email"
                 register={register('email', {
                   required: 'This field is required',
@@ -72,15 +76,17 @@ const ResetPasswordScreen = () => {
               />
               {errors.email && <ErrorMessage>{errors?.email?.message || 'Error'}</ErrorMessage>}
             </FieldContain>
+
             <PrimeButton
               isLoading={user.status === 'Loading' && true}
               label="Reset"
-              maxHeight="46px"
               useButton={() => handleSubmit(onSubmit)}
               disable={!isValid}
             />
+
           </Form>
         </TestContain>
+
         <BackToLogin to="/">Return to Login</BackToLogin>
       </Root>
     </>
@@ -124,6 +130,7 @@ const Welcome = styled.h1`
   font-family: 'Rubik-Medium';
   font-size: 24px;
   color: #122434;
+  line-height: 148%;
   margin-bottom: 20px;
 `;
 
@@ -156,23 +163,24 @@ const Label = styled.label`
   font-size: 12px;
   font-family: 'Rubik-Regular';
   color: #737373;
+  line-height: 150%;
   text-align: left;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 `;
 
 const FieldContain = styled.div`
   position: relative;
   width: 100%;
-  height: 95px;
-  margin-bottom: 26px
+  margin-bottom: 40px
 `;
 
 const BackToLogin = styled(Link)`
   text-decoration: none;
-  font-family: 'Rubik-Regular';
+  font-family: 'Rubik-Medium';
   line-height: 150%;
   width: 138px;
   height: 36px;
+  font-weight: 500;
   background: rgba(18, 36, 52, 0.15);
   display: flex;
   flex-direction: column;

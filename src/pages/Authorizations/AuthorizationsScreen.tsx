@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,10 +13,16 @@ import eyeImage from '../../assets/images/eye-password-show.svg';
 import eyeOffImage from '../../assets/images/eye-password-hide.svg';
 import checkImage from '../../assets/images/check-box-done.svg';
 import { sizeScreen } from '../../types';
+import routsConstant from '../../types/constant-routs';
 
 enum color {
   active = '#CAF0FF',
   deactivate = '#F8F8F8',
+}
+
+enum colorTextTab {
+  active = '#122434',
+  deactivate = '#737373',
 }
 
 enum ScreenState {
@@ -24,14 +30,9 @@ enum ScreenState {
   register,
 }
 
-enum InputState {
-  normal = 'normal',
-  error = 'error',
-  disabled = 'disabled',
-}
-
 interface TabProps {
   backgroundColor: color;
+  color: colorTextTab;
 }
 
 type FormValues = {
@@ -69,29 +70,30 @@ const AuthorizationsScreen = () => {
     handleSubmit,
     reset,
     formState: { errors, isValid },
-  } = useForm<FormValues>({ mode: 'all' });
+  } = useForm<FormValues>({ mode: 'onChange' });
 
   const onSubmit = async (data: FormValues) => {
     if (stateScreen === ScreenState.register) {
+      // register function
       const response = await dispatch(
         operations.user.signUpUser({ email: data.email, password: data.password }),
       );
-      console.log(response);
       if (operations.user.signUpUser.fulfilled.match(response)) {
-        toast(response.payload, options);
+        // success to register
+        nav(routsConstant.DASHBOARD, { replace: true });
       } else if (response.payload) {
         toast(response.payload, options);
       } else {
         toast(response.error.message, options);
       }
     } else {
+      // login function
       const responseLogIn = await dispatch(
         operations.user.signInUser({ email: data.email, password: data.password }),
       );
-      console.log(responseLogIn);
-      console.log(operations.user.signUpUser.fulfilled.match(responseLogIn));
-      if (operations.user.signUpUser.fulfilled.match(responseLogIn)) {
-        toast('Success', options);
+      if (operations.user.signInUser.fulfilled.match(responseLogIn)) {
+        // success to login
+        nav(routsConstant.DASHBOARD, { replace: true });
       } else if (responseLogIn.payload) {
         toast(responseLogIn.payload, options);
       } else {
@@ -103,13 +105,13 @@ const AuthorizationsScreen = () => {
   const tabReg = () => {
     setStateScreen(ScreenState.login);
     reset({ email: '', password: '' });
-    nav('/register');
+    nav(routsConstant.SIGN_UP);
   };
 
   const tabLogin = () => {
     setStateScreen(ScreenState.register);
     reset({ email: '', password: '' });
-    nav('/login');
+    nav(routsConstant.SIGN_IN);
   };
 
   const hidePassword = () => {
@@ -139,6 +141,9 @@ const AuthorizationsScreen = () => {
             onClick={tabReg}
             tabIndex={0}
             backgroundColor={stateScreen === ScreenState.login ? color.deactivate : color.active}
+            color={
+              stateScreen === ScreenState.login ? colorTextTab.deactivate : colorTextTab.active
+            }
           >
             Register
           </TabBut>
@@ -146,6 +151,9 @@ const AuthorizationsScreen = () => {
             onClick={tabLogin}
             tabIndex={0}
             backgroundColor={stateScreen === ScreenState.register ? color.deactivate : color.active}
+            color={
+              stateScreen === ScreenState.register ? colorTextTab.deactivate : colorTextTab.active
+            }
           >
             Login
           </TabBut>
@@ -154,7 +162,6 @@ const AuthorizationsScreen = () => {
           <FieldContain>
             <Label>Email</Label>
             <LoginInput
-              maxHeight="46px"
               placeholder="Enter email"
               register={register('email', {
                 required: 'This field is required',
@@ -176,7 +183,6 @@ const AuthorizationsScreen = () => {
             <Label>Password</Label>
             <EyePassword src={hidePasswordState ? eyeImage : eyeOffImage} onClick={hidePassword} />
             <LoginInput
-              maxHeight="46px"
               placeholder="Enter password"
               typeInput={hidePasswordState ? 'text' : 'password'}
               register={register('password', {
@@ -190,6 +196,7 @@ const AuthorizationsScreen = () => {
             />
             {errors.password && <ErrorMessage>{errors?.password?.message || 'Error'}</ErrorMessage>}
           </FieldContain>
+
           {stateScreen === ScreenState.login && (
             <LoginRemember>
               <PasswordRemember onClick={checkRemember}>
@@ -201,22 +208,28 @@ const AuthorizationsScreen = () => {
               <ForgotPassword to="/reset">Forgot password?</ForgotPassword>
             </LoginRemember>
           )}
+
           {stateScreen === ScreenState.register && (
             <RegisterAgreement>
               I agree that by clicking
               {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
-              <strong>“Registration”</strong> I accept the{' '}
-              <RegisterPolicy to="/">Terms Of Service</RegisterPolicy>
+              <StrongText> “Registration”</StrongText> I accept the{' '}
               {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
-              and <RegisterPolicy to="/">Privacy Policy</RegisterPolicy>
+              <RegisterPolicy to="/">
+                Terms Of
+                <br />
+                Service
+              </RegisterPolicy>
+              {/*  eslint-disable-next-line react/jsx-one-expression-per-line */}
+              and<RegisterPolicy to="/"> Privacy Policy</RegisterPolicy>
             </RegisterAgreement>
           )}
+
           <PrimeButton
             isLoading={user.status === 'Loading' && true}
             label={stateScreen === ScreenState.login ? 'Login' : 'Registration'}
             useButton={() => handleSubmit(onSubmit)}
             disable={!isValid}
-            maxHeight="46px"
           />
         </Form>
       </TestContain>
@@ -236,7 +249,6 @@ const TestContain = styled.div`
   max-width: 454px;
   padding: 40px;
   border-radius: 6px;
-  box-sizing: border-box;
   @media (max-width: ${sizeScreen.tablet}) {
     background-color: #FFFFFF;
   }
@@ -251,6 +263,7 @@ const Welcome = styled.h1`
   font-weight: 500;
   font-family: 'Rubik-Medium';
   font-size: 24px;
+  line-height: 148%;
   text-align: center;
   color: #122434;
 `;
@@ -258,8 +271,8 @@ const Welcome = styled.h1`
 const Tab = styled.div`
   background-color: #F8F8F8;
   min-width: 100%;
-  margin-top: 25px;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 21px;
   height: 40px;
   display: flex;
   flex-direction: row;
@@ -271,20 +284,17 @@ const Tab = styled.div`
 const TabBut = styled.a<TabProps>`
   width: 49%;
   height: 36px;
-  color: #122434;
+  color: ${(props) => props.color};
   background-color: ${(props) => props.backgroundColor};
   border-radius: 6px;
   cursor: pointer;
   display: flex;
-  flex-direction: row;
-  font-size: 12px;
+  flex-direction: column;
   justify-content: center;  
   align-items: center;
+  font-size: 12px;
   font-family: 'Rubik-Regular';
-  &:hover {
-    background-color: #51C2EE;
-    color: #122434;
-  };
+  &:hover {};
   &:focus {};
   &:focus-visible {
     outline: -webkit-focus-ring-color auto 0px;
@@ -297,6 +307,7 @@ const Label = styled.label`
   color: #737373;
   text-align: left;
   margin-bottom: 5px;
+  line-height: 150%;
   box-sizing: border-box;
 `;
 
@@ -305,6 +316,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  font: inherit;
 
 `;
 
@@ -320,9 +332,8 @@ const ErrorMessage = styled.p`
 const FieldContain = styled.div`
   position: relative;
   width: 100%;
-  height: 65px;
-  margin-bottom: 34px;
-  box-sizing: border-box;
+  margin-bottom: 24px;
+  font: inherit;
 `;
 
 const LoginRemember = styled.div`
@@ -372,8 +383,8 @@ const EyePassword = styled.img`
   height: 24px;
   width: 24px;
   position: absolute;
-  top: 54%;
-  left: 89%;
+  top: 46%;
+  left: 89.2%;
   color: #737373;
   cursor: pointer;
 `;
@@ -385,22 +396,28 @@ const CheckImage = styled.img`
 
 const RegisterAgreement = styled.span`
   width: 100%;
-  height: 28px;
-  margin-bottom: 20px;
-  margin-top: 27px;
-  color: #222222;
+  margin-bottom: 16px;
+  margin-top: 16px;
+  color: #737373;
   text-align: center;
+  line-height: 150%;
   font-size: 12px;
   font-family: 'Rubik-Regular';
 `;
 
+const StrongText = styled.strong`
+  font-family: 'Rubik-Medium';
+  color: #122434;
+`;
+
 const RegisterPolicy = styled(Link)`
   text-decoration: none;
-  color: #737373;
+  color: #122434;
   font-size: 12px;
   font-family: 'Rubik-Regular';
   cursor: pointer;
   &:hover {
     color: #122434;
+    text-decoration: underline;
   };
 `;

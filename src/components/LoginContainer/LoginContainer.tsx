@@ -25,8 +25,6 @@ const Root = styled.div`
   align-items: center;
   width: 100%;
   height: 100vh;
-  background: url(${img}) center;
-  background-size: cover;
 `;
 
 const Header = styled.header`
@@ -50,15 +48,23 @@ const TextHeader = styled.p`
   font-size: 18px;
   font-family: 'GothamRounded-Medium';
   letter-spacing: 4px;
+  line-height: 26px;
+  line-height: 145%;
+  vertical-align: Top;
+  letter-spacing: 20%;
 `;
 
 const Content = styled.section`
   width: 100%;
+  min-height: calc(100% - 80px);
   display: flex;
   flex-direction: column;
   align-items: center;
   box-sizing: border-box;
   padding: 73px 0 20px 0;
+  background: url(${img}) center;
+  background-size: cover;
+  background-position: 100% 100%;
   @media (max-width: ${sizeScreen.tablet}) {
     padding: 120px 15px 20px 15px;
   }

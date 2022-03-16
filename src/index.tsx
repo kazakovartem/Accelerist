@@ -32,6 +32,9 @@ const Global = createGlobalStyle`
   url(${GothamRounded}) format('opentype');
   font-style: normal;
 }
+body * {
+  font: inherit;
+}
 
 body {
   margin: 0;
@@ -40,9 +43,18 @@ body {
 }
 body p {
   margin: 0;
+  box-sizing: border-box;
 }
 body h1 {
   margin: 0;
+}
+body div {
+  margin: 0;
+  box-sizing: border-box;
+}
+body span {
+  margin: 0;
+  box-sizing: border-box;
 }
 `;
 

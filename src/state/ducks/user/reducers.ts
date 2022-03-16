@@ -5,10 +5,9 @@ type UserState = {
   email: string;
   token: string;
   status: null | string;
-  error: null | string | undefined;
   id: string;
-  firstName: string;
-  lastName: string;
+  firstName: null | string;
+  lastName: null | string;
   isAuthorized: boolean;
   role: string;
   teamId: string;
@@ -16,6 +15,10 @@ type UserState = {
   createdAt: string;
   updatedAt: string;
   avatarKey: string | null;
+  deletedAt: string | null;
+  imported: boolean;
+  isReceivingNotifications: boolean;
+  linkedinLink: string | null;
 };
 
 const User = createSlice({
@@ -34,7 +37,6 @@ const User = createSlice({
     updatedAt: '',
     avatarKey: null,
     status: null,
-    error: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -42,12 +44,10 @@ const User = createSlice({
       .addCase(operations.signInUser.pending, (state) => {
         // started signInUser
         state.status = 'Loading';
-        state.error = null;
       })
       .addCase(operations.signInUser.fulfilled, (state, action) => {
         // succeeded signInUser
         state.status = 'Resolved';
-        state.error = null;
         state.token = action.payload.accessToken;
         state.email = action.payload.user.email;
         state.id = action.payload.user.id;
@@ -61,24 +61,17 @@ const User = createSlice({
         state.updatedAt = action.payload.user.updatedAt;
         state.avatarKey = action.payload.user.avatarKey;
       })
-      .addCase(operations.signInUser.rejected, (state, action) => {
+      .addCase(operations.signInUser.rejected, (state) => {
         // failed signInUser
-        if (action.payload) {
-          state.error = action.payload.payload;
-        } else {
-          state.error = action.error!.message;
-        }
         state.status = 'Error';
       })
       .addCase(operations.signUpUser.pending, (state) => {
         // started signUpUser
         state.status = 'Loading';
-        state.error = null;
       })
       .addCase(operations.signUpUser.fulfilled, (state, action) => {
         // succeeded signUpUser
         state.status = 'Resolved';
-        state.error = null;
         state.token = action.payload.accessToken;
         state.email = action.payload.user.email;
         state.id = action.payload.user.id;
@@ -92,50 +85,37 @@ const User = createSlice({
         state.updatedAt = action.payload.user.updatedAt;
         state.avatarKey = action.payload.user.avatarKey;
       })
-      .addCase(operations.signUpUser.rejected, (state, action) => {
+      .addCase(operations.signUpUser.rejected, (state) => {
         // failed signUpUser
         state.status = 'Error';
-        // state.error = action.payload;
-        if (action.payload) {
-          state.error = action.payload.errorMessage;
-        } else {
-          state.error = action.error!.message;
-        }
       })
       .addCase(operations.sendMail.pending, (state) => {
         // started sendMail
         state.status = 'Loading';
-        state.error = null;
       })
       .addCase(operations.sendMail.fulfilled, (state) => {
         // succeeded sendMail
         state.status = 'Resolved';
-        state.error = null;
       })
-      .addCase(operations.sendMail.rejected, (state, action) => {
+      .addCase(operations.sendMail.rejected, (state) => {
         // failed sendMail
         state.status = 'Error';
-        state.error = action.payload!.payload;
       })
       .addCase(operations.changePassword.pending, (state) => {
         // started changePassword
         state.status = 'Loading';
-        state.error = null;
       })
       .addCase(operations.changePassword.fulfilled, (state) => {
         // started changePassword
         state.status = 'Resolved';
-        state.error = null;
       })
-      .addCase(operations.changePassword.rejected, (state, action) => {
+      .addCase(operations.changePassword.rejected, (state) => {
         // failed changePassword
         state.status = 'Error';
-        state.error = action.payload!.payload;
       })
       .addCase(operations.addToken.fulfilled, (state, action) => {
         // started changePassword
         state.status = 'Resolved';
-        state.error = null;
         state.token = action.payload;
       });
   },
