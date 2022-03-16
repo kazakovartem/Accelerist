@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTypedDispatch } from '../../state/store';
 import PrimeButton from '../../UI/PrimeButton';
 import { operations, selectors } from '../../state/ducks/ducks';
 import LoginInput from '../../UI/LoginInput';
@@ -45,7 +46,7 @@ const options = {
 };
 
 const AuthorizationsScreen = () => {
-  const dispatch = useDispatch();
+  const dispatch = useTypedDispatch();
   const nav = useNavigate();
 
   let location = ScreenState.login;
@@ -77,14 +78,25 @@ const AuthorizationsScreen = () => {
       );
       console.log(response);
       if (operations.user.signUpUser.fulfilled.match(response)) {
-        //  toast(user.error, options);
-      }
-      if (response.payload) {
         toast(response.payload, options);
+      } else if (response.payload) {
+        toast(response.payload, options);
+      } else {
+        toast(response.error.message, options);
       }
     } else {
-      await dispatch(operations.user.signInUser({ email: data.email, password: data.password }));
-      toast(user.error, options);
+      const responseLogIn = await dispatch(
+        operations.user.signInUser({ email: data.email, password: data.password }),
+      );
+      console.log(responseLogIn);
+      console.log(operations.user.signUpUser.fulfilled.match(responseLogIn));
+      if (operations.user.signUpUser.fulfilled.match(responseLogIn)) {
+        toast('Success', options);
+      } else if (responseLogIn.payload) {
+        toast(responseLogIn.payload, options);
+      } else {
+        toast(responseLogIn.error.message, options);
+      }
     }
   };
 

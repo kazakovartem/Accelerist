@@ -13,6 +13,25 @@ const AllAppRouts = () => {
   const user = useSelector(selectors.user.selectUser());
 
   return (
+    <Routes>
+      <Route path="/" element={<LoginContainer />}>
+        <Route path={routsConstant.SIGN_IN} element={<AuthorizationsScreen />} />
+
+        <Route path={routsConstant.SIGN_UP} element={<AuthorizationsScreen />} />
+
+        <Route path={routsConstant.SEND_MAIL} element={<ResetPassword />} />
+
+        <Route path={routsConstant.CHANGE_PASSWORD} element={<ChangePassword />} />
+
+        <Route path="/" element={<Navigate to={routsConstant.SIGN_IN} />} />
+      </Route>
+    </Routes>
+  );
+};
+
+export default AllAppRouts;
+
+/*
     <>
       {!user.isAuthorized && (
         <Routes>
@@ -49,7 +68,4 @@ const AllAppRouts = () => {
         </Routes>
       )}
     </>
-  );
-};
-
-export default AllAppRouts;
+    */

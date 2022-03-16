@@ -1,4 +1,5 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { useDispatch } from 'react-redux';
 import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import api from '../api';
@@ -29,4 +30,6 @@ export const store = configureStore({
     }),
 });
 
+export type AppDispatch = typeof store.dispatch;
+export const useTypedDispatch = () => useDispatch<AppDispatch>();
 export const persistor = persistStore(store);

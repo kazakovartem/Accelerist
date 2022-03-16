@@ -2,6 +2,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
 import api from '../../../api';
 import { store } from '../../store';
+
 import {
   UserResponse,
   SignInPayload,
@@ -25,7 +26,7 @@ type DefaultRejectValue = {
     requestId: string;
     requestStatus: string;
   };
-  payload: string;
+  payload: any;
   type: string;
 };
 type AppDispatch = typeof store.dispatch;
@@ -49,11 +50,14 @@ export type ExtraParamsThunkType<T = DefaultRejectValue> = {
 type SendMailResponse = {};
 
 type AddTokenResponse = string;
-
+// ExtraParamsThunkType<DefaultRejectValue>
 export const signInUser = createAsyncThunk<
   UserResponse,
   SignInPayload,
-  ExtraParamsThunkType<DefaultRejectValue>
+  {
+    extra: { api: typeof api };
+    rejectValue: DefaultRejectValue;
+  }
 >('user/sign_in', async ({ email, password }: SignInPayload, { extra, rejectWithValue }) => {
   try {
     const response = await extra.api.user.signIn(email, password);
@@ -71,11 +75,6 @@ export const signInUser = createAsyncThunk<
   }
 });
 // ExtraParamsThunkType<DefaultRejectValue>
-
-interface MyKnownError {
-  errorMessage: string;
-  payload: string;
-}
 
 interface ValidationErrors {
   errorMessage: string
