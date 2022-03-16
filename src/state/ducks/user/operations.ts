@@ -18,17 +18,34 @@ type DefaultRejectValue = {
   meta: {
     aborted: boolean;
     arg: {
-      email: string;
-      password: string;
+      email?: string;
+      password?: string;
     };
     condition: boolean;
     rejectedWithValue: boolean;
     requestId: string;
     requestStatus: string;
   };
-  payload: any;
+  payload: string;
   type: string;
 };
+
+type DefaultFulfilledValue = {
+  meta: {
+    aborted: boolean;
+    arg: {
+      email?: string;
+      password?: string;
+    };
+    condition: boolean;
+    rejectedWithValue: boolean;
+    requestId: string;
+    requestStatus: string;
+  };
+  payload: UserResponse;
+  type: string;
+};
+
 type AppDispatch = typeof store.dispatch;
 type State = {
   user: {
@@ -57,6 +74,7 @@ export const signInUser = createAsyncThunk<
   {
     extra: { api: typeof api };
     rejectValue: DefaultRejectValue;
+    fulfilledMeta: DefaultFulfilledValue;
   }
 >('user/sign_in', async ({ email, password }: SignInPayload, { extra, rejectWithValue }) => {
   try {
@@ -71,7 +89,11 @@ export const signInUser = createAsyncThunk<
     }
     return response.data;
   } catch (error: any) {
-    return rejectWithValue(error.message);
+    const err: AxiosError<ValidationErrors> = error;
+    if (!err.response) {
+      throw error;
+    }
+    return rejectWithValue(error.response.data);
   }
 });
 // ExtraParamsThunkType<DefaultRejectValue>

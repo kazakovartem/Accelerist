@@ -63,7 +63,11 @@ const User = createSlice({
       })
       .addCase(operations.signInUser.rejected, (state, action) => {
         // failed signInUser
-        state.error = action.payload!.payload;
+        if (action.payload) {
+          state.error = action.payload.payload;
+        } else {
+          state.error = action.error!.message;
+        }
         state.status = 'Error';
       })
       .addCase(operations.signUpUser.pending, (state) => {
