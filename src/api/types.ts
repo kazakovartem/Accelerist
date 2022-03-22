@@ -4,3 +4,7 @@ export const SIGN_UP = `/auth/sign_up`;
 export const PASSWORD_SEND_MAIL = `/auth/change_password/send_mail`;
 export const PASSWORD_CHANGE = `/auth/change_password/change`;
 export const GET_TEAM = `/team`;
+export const GET_LAST_LOGIN = `/team/last_logins`;
+export const GET_SAVED_LIST = `/saved-list`;
+export const GET_COMPANY = `/companies`;
+export const GET_FAVORITES_COMPANY = `/companies/favorites`;

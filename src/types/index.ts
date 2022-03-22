@@ -20,3 +20,9 @@ export enum sizeScreen {
   tablet= '768px',
   laptop= '1440px',
 }
+
+export enum SortSavedList {
+  alphabet= 'alphabet',
+  available= 'available',
+  lastActivity= 'last-activity',
+}

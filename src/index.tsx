@@ -10,6 +10,8 @@ import { store, persistor } from './state/store';
 import RubikMedium from './assets/fonts/Rubik-Medium.ttf';
 import RubikRegular from './assets/fonts/Rubik-Regular.ttf';
 import GothamRounded from './assets/fonts/GothamRoundedMedium.otf';
+import GothamRoundedBold from './assets/fonts/GothamRoundedBold.otf';
+import GothamRoundedBoldSSM from './assets/fonts/GothamRoundedSSmBold.ttf';
 
 const Global = createGlobalStyle`
 @font-face {
@@ -32,14 +34,37 @@ const Global = createGlobalStyle`
   url(${GothamRounded}) format('opentype');
   font-style: normal;
 }
+
+@font-face {
+  font-family: 'GothamRounded-Bold';
+  font-display: swap;
+  src:  local('GothamRounded-Bold'),
+  url(${GothamRoundedBold}) format('opentype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'GothamRounded-BoldSSM';
+  font-display: swap;
+  src:  local('GothamRounded-BoldSSM'),
+  url(${GothamRoundedBoldSSM}) format('truetype');
+  font-style: normal;
+}
+
 body * {
   font: inherit;
+}
+
+body ul {
+  list-style: none;
+  padding: 0px;
 }
 
 body {
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-family: 'Rubik-Regular';
 }
 body p {
   margin: 0;

@@ -39,6 +39,21 @@ export type TeamState = {
     searchCount: null | number;
     pitchCount: null | number;
     status: null | string;
-    error: null | string;
   };
+};
+
+export type DefaultRejectValue = {
+  error: { message: string };
+  meta: {
+    aborted: boolean;
+    arg: {
+      id?: string;
+    };
+    condition: boolean;
+    rejectedWithValue: boolean;
+    requestId: string;
+    requestStatus: string;
+  };
+  payload: string;
+  type: string;
 };

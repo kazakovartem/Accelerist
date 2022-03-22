@@ -6,20 +6,25 @@ interface PrimeButtonProps {
   useButton(): void;
   isLoading?: boolean;
   disable?: boolean;
-}
-
-interface PropsTitle {
-  inputColor: string;
+  height?: boolean;
 }
 
 interface PropsBtn {
   cursor: string;
   background: string;
   inputColor: string;
+  heightBtn: string;
 }
 
-const PrimeButton: React.FC<PrimeButtonProps> = ({ label, useButton, isLoading, disable }) => {
+const PrimeButton: React.FC<PrimeButtonProps> = ({
+  label,
+  useButton,
+  isLoading,
+  disable,
+  height,
+}) => {
   const disableCursor = disable ? 'no-drop' : 'pointer';
+  const heightButton = height ? '36px' : '46px';
   return (
     <Root
       onClick={useButton}
@@ -27,17 +32,19 @@ const PrimeButton: React.FC<PrimeButtonProps> = ({ label, useButton, isLoading, 
       background={disable ? '#CEEDF9' : '#2baee0'}
       disabled={disable || isLoading}
       inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}
+      heightBtn={heightButton}
     >
       {/* eslint-disable-next-line react/jsx-no-useless-fragment */}
-      {!isLoading && <>{ label }</>}
+      {!isLoading && <>{label}</>}
       {isLoading && <Spinner />}
     </Root>
   );
 };
-// <Title inputColor={disable ? 'rgba(43, 174, 224, 0.3)' : '#FFF'}>{label}</Title>
+
 PrimeButton.defaultProps = {
   isLoading: false,
   disable: false,
+  height: false,
 };
 
 export default React.memo(PrimeButton);
@@ -54,9 +61,9 @@ const Root = styled.button<PropsBtn>`
   cursor: ${(p) => p.cursor};
   border: 0;
   font-family: 'Rubik-Medium';
-  height: 46px;
+  height: ${(p) => (p.heightBtn)};
   font-weight: 500;
-  font-size: 16px;
+  font-size: ${(p) => (p.heightBtn === '46px' ? '16px' : '14px')};
   font-weight: 500;
   text-align: center;
   color: #fff;
